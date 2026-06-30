@@ -1,12 +1,16 @@
 'use client';
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, forwardRef, useImperativeHandle } from "react";
 import StatCard from "./StatCard";
 import TimeSeriesChart from "./TimeSeriesChart";
 import SourceBreakdownChart from "./SourceBreakdownChart";
 import { fetchStats, fetchTimeSeries, StatsResponse, TimeSeriesPoint } from "@/lib/api";
 
-export default function Overview() {
+export interface OverviewRef {
+    refresh: () => void;
+}
+
+const Overview = forwardRef<OverviewRef>((_, ref) => {
     const [stats, setStats] = useState<StatsResponse | null>(null);
     const [timeSeries, setTimeSeries] = useState<TimeSeriesPoint[]>([]);
     const [loading, setLoading] = useState(true);
@@ -25,6 +29,10 @@ export default function Overview() {
             setLoading(false);
         }
     }, []);
+
+    useImperativeHandle(ref, () => ({
+        refresh: loadData,
+    }));
 
     useEffect(() => {
         loadData();
@@ -49,4 +57,8 @@ export default function Overview() {
             </div>
         </section>
     );
-}
+});
+
+Overview.displayName = 'Overview';
+
+export default Overview;

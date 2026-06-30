@@ -70,6 +70,6 @@ export async function fetchTimeSeries(hours: number = 24): Promise<TimeSeriesPoi
 }
 
 export async function sendWebhook(payload: Record<string, any>): Promise<WebhookResponse> {
-    const { data } = await apiClient.get<WebhookResponse>('/webhook/receive', payload);
+    const { data } = await apiClient.post<WebhookResponse>('/webhook/receive', payload);
     return data;
 }
